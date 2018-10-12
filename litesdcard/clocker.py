@@ -111,26 +111,26 @@ class SDClockerS7(Module, AutoCSR):
         mmcm_drdy = Signal()
 
         self.specials += [
-            Instance("MMCME2_ADV",
+            Instance("PLLE2_BASE",
                 p_BANDWIDTH="OPTIMIZED",
                 i_RST=self._mmcm_reset.storage, o_LOCKED=mmcm_locked,
 
                 # VCO
-                p_REF_JITTER1=0.01, p_CLKIN1_PERIOD=1e9/sys_clk_freq,
-                p_CLKFBOUT_MULT_F=32, p_CLKFBOUT_PHASE=0.000, p_DIVCLK_DIVIDE=5,
-                i_CLKIN1=ClockSignal(), i_CLKFBIN=mmcm_fb, o_CLKFBOUT=mmcm_fb,
+                p_REF_JITTER1=0.01, p_CLKIN1_PERIOD=20.0,
+                p_CLKFBOUT_MULT=16, p_CLKFBOUT_PHASE=0.000, p_DIVCLK_DIVIDE=1,
+                i_CLKIN1=ClockSignal("clk50"), i_CLKFBIN=mmcm_fb, o_CLKFBOUT=mmcm_fb,
 
                 # CLK0
-                p_CLKOUT0_DIVIDE_F=128, p_CLKOUT0_PHASE=0.000, o_CLKOUT0=mmcm_clk0,
+                p_CLKOUT0_DIVIDE=128, p_CLKOUT0_PHASE=0.000, o_CLKOUT0=mmcm_clk0,
 
                 # DRP
-                i_DCLK=ClockSignal(),
-                i_DWE=self._mmcm_write.re,
-                i_DEN=self._mmcm_read.re | self._mmcm_write.re,
-                o_DRDY=mmcm_drdy,
-                i_DADDR=self._mmcm_adr.storage,
-                i_DI=self._mmcm_dat_w.storage,
-                o_DO=self._mmcm_dat_r.status
+                # i_DCLK=ClockSignal(),
+                # i_DWE=self._mmcm_write.re,
+                # i_DEN=self._mmcm_read.re | self._mmcm_write.re,
+                # o_DRDY=mmcm_drdy,
+                # i_DADDR=self._mmcm_adr.storage,
+                # i_DI=self._mmcm_dat_w.storage,
+                # o_DO=self._mmcm_dat_r.status
             ),
             Instance("BUFG", i_I=mmcm_clk0, o_O=self.cd_sd.clk),
         ]
